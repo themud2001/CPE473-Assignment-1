@@ -97,7 +97,6 @@ int main() {
     scheduler.SortProcesses();
     scheduler.Schedule();
     cout << endl;
-    scheduler.PrintProcesses();
     
     system("pause");
 
