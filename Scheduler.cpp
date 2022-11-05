@@ -30,7 +30,7 @@ bool SortingComparator(Process el1, Process el2) {
 class Scheduler {
     private:
     vector<Process> processesList;
-    vector<Process> queue;
+    vector<Process*> queue;
 
     void CalculateStats(Process &element, int &timeline) {
         element.response = timeline - element.arrivalTime;
@@ -71,10 +71,10 @@ class Scheduler {
         for (int i = 0; i < processesList.size(); i++) {
             if (processesList[i].arrivalTime < timeline) {
                 if (i == processesList.size() - 1) {
-                    queue.push_back(processesList[i]);
+                    queue.push_back(&processesList[i]);
                     continue;
                 } else if (processesList[i + 1].arrivalTime < timeline) {
-                    queue.push_back(processesList[i]);
+                    queue.push_back(&processesList[i]);
                     continue;
                 }
             }
@@ -84,8 +84,8 @@ class Scheduler {
         }
 
         for (int i = queue.size() - 1; i >= 0; i--) {
-            CalculateStats(queue[i], timeline);
-            cout << queue[i].name;
+            CalculateStats(*queue[i], timeline);
+            cout << queue[i]->name;
             queue.pop_back();
         }
     }
@@ -94,7 +94,7 @@ class Scheduler {
         for (int i = 0; i < processesList.size(); i++) {
             cout << processesList[i].name << ": ";
             cout << "(response=" << processesList[i].response << ", ";
-            cout << "(turnaround=" << processesList[i].turnAround << ", ";
+            cout << "turnaround=" << processesList[i].turnAround << ", ";
             cout << "delay=" << processesList[i].delay << ") ";
             cout << endl;
         }
