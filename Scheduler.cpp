@@ -19,6 +19,7 @@ class Process {
     int arrivalTime;
     int processingTime;
     int turnAround;
+    int delay;
     int response;
 };
 
@@ -30,6 +31,12 @@ class Scheduler {
     private:
     vector<Process> processesList;
     vector<Process> queue;
+
+    void CalculateStats(Process &element, int &timeline) {
+        timeline += element.processingTime;
+        element.turnAround = timeline - element.arrivalTime;
+        element.delay = element.turnAround - element.processingTime;
+    }
 
     public:
     void ReadFile(string fileName) {
@@ -71,11 +78,12 @@ class Scheduler {
                 }
             }
 
+            CalculateStats(processesList[i], timeline);
             cout << processesList[i].name;
-            timeline += processesList[i].processingTime;
         }
 
         for (int i = queue.size() - 1; i >= 0; i--) {
+            CalculateStats(queue[i], timeline);
             cout << queue[i].name;
         }
     }
