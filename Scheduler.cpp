@@ -80,20 +80,22 @@ class Scheduler {
             }
 
             CalculateStats(processesList[i], timeline);
-            cout << processesList[i].name << processesList[i].turnAround << processesList[i].delay << processesList[i].response << endl;
+            cout << processesList[i].name;
         }
 
         for (int i = queue.size() - 1; i >= 0; i--) {
             CalculateStats(queue[i], timeline);
-            cout << queue[i].name << queue[i].turnAround << queue[i].delay << queue[i].response << endl;
+            cout << queue[i].name;
+            queue.pop_back();
         }
     }
 
     void PrintProcesses() {
         for (int i = 0; i < processesList.size(); i++) {
-            cout << processesList[i].name << " ";
-            cout << processesList[i].arrivalTime << " ";
-            cout << processesList[i].processingTime << " ";
+            cout << processesList[i].name << ": ";
+            cout << "(response=" << processesList[i].response << ", ";
+            cout << "(turnaround=" << processesList[i].turnAround << ", ";
+            cout << "delay=" << processesList[i].delay << ") ";
             cout << endl;
         }
     }
@@ -106,6 +108,7 @@ int main() {
     scheduler.SortProcesses();
     scheduler.Schedule();
     cout << endl;
+    scheduler.PrintProcesses();
     
     system("pause");
 
