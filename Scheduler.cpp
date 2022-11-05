@@ -33,6 +33,7 @@ class Scheduler {
     vector<Process> queue;
 
     void CalculateStats(Process &element, int &timeline) {
+        element.response = timeline - element.arrivalTime;
         timeline += element.processingTime;
         element.turnAround = timeline - element.arrivalTime;
         element.delay = element.turnAround - element.processingTime;
@@ -79,12 +80,12 @@ class Scheduler {
             }
 
             CalculateStats(processesList[i], timeline);
-            cout << processesList[i].name;
+            cout << processesList[i].name << processesList[i].turnAround << processesList[i].delay << processesList[i].response << endl;
         }
 
         for (int i = queue.size() - 1; i >= 0; i--) {
             CalculateStats(queue[i], timeline);
-            cout << queue[i].name;
+            cout << queue[i].name << queue[i].turnAround << queue[i].delay << queue[i].response << endl;
         }
     }
 
