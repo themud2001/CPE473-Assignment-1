@@ -97,6 +97,7 @@ class Scheduler {
             for (int j = queue.size() - 1; j >= 0; j--) {
                 CalculateStats(*queue[j], timeline);
                 cout << queue[j]->name;
+                cout << timeline << endl;
                 queue.pop_back();
             }
         }
