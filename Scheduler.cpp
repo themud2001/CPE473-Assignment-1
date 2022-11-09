@@ -119,7 +119,6 @@ class Scheduler {
                 CalculateStats(*queue[j], timeline);
                 cout << queue[j]->name;
                 processesOrder += queue[j]->name;
-                cout << timeline << endl;
                 queue.pop_back();
             }
         }
