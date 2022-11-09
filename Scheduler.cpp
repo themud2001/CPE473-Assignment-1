@@ -71,49 +71,32 @@ class Scheduler {
 
     void Schedule() {
         int timeline = 0;
-        vector<Process*> earlyQueue;
-        vector<Process*> lateQueue;
-
+        
         for (int i = 0; i < processesList.size(); i++) {
-            if (processesList[i].arrivalTime <= timeline) {
-                if (i == processesList.size() - 1) {
-                    earlyQueue.push_back(&processesList[i]);
-                    continue;
-                } else if (processesList[i + 1].arrivalTime < timeline) {
-                    earlyQueue.push_back(&processesList[i]);
-                    continue;
+            int tempIndex = i;
+
+            if (i == 0) {
+                CalculateStats(processesList[i], timeline);
+                cout << processesList[i].name;
+            } else if (processesList[i].arrivalTime < timeline) {
+                queue.push_back(&processesList[i]);
+                i++;
+            }
+
+            for (int j = tempIndex + 1; j < processesList.size(); j++) {
+                if (processesList[j].arrivalTime < timeline) {
+                    queue.push_back(&processesList[j]);
+                    i++;
                 } else {
-                    if (earlyQueue.size() > 0) {
-                        earlyQueue.push_back(&processesList[i]);
-                        continue;
-                    }
-                }
-            } else {
-                if (i == processesList.size() - 1) {
-                    CalculateStats(processesList[i], timeline);
-                    cout << processesList[i].name << " " << timeline << endl;
-                } else if (processesList[i + 1].arrivalTime < processesList[i].arrivalTime + processesList[i].processingTime) {
-                    lateQueue.push_back(&processesList[i]);
-                    continue;
+                    break;
                 }
             }
 
-            CalculateStats(processesList[i], timeline);
-            cout << processesList[i].name << " " << timeline << endl;
-        }
-
-        for (int i = earlyQueue.size() - 1; i >= 0; i--) {
-            CalculateStats(*earlyQueue[i], timeline);
-            cout << earlyQueue[i]->name;
-            cout << " " << timeline << endl;
-            earlyQueue.pop_back();
-        }
-
-        for (int i = lateQueue.size() - 1; i >= 0; i--) {
-            CalculateStats(*lateQueue[i], timeline);
-            cout << lateQueue[i]->name;
-            cout << " " << timeline << endl;
-            lateQueue.pop_back();
+            for (int j = queue.size() - 1; j >= 0; j--) {
+                CalculateStats(*queue[j], timeline);
+                cout << queue[j]->name;
+                queue.pop_back();
+            }
         }
     }
 
