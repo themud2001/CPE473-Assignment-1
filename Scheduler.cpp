@@ -80,7 +80,9 @@ class Scheduler {
                 cout << processesList[i].name;
             } else if (processesList[i].arrivalTime < timeline) {
                 queue.push_back(&processesList[i]);
-                i++;
+            } else {
+                CalculateStats(processesList[i], timeline);
+                cout << processesList[i].name;
             }
 
             for (int j = tempIndex + 1; j < processesList.size(); j++) {
