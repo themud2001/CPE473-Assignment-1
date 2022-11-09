@@ -31,6 +31,7 @@ class Scheduler {
     private:
     vector<Process> processesList;
     vector<Process*> queue;
+    string processesOrder = "";
 
     void CalculateStats(Process &element, int &timeline) {
         if (element.arrivalTime > timeline) {
@@ -65,55 +66,59 @@ class Scheduler {
         file.close();
     }
 
+    void WriteFile(string fileName) {
+        ofstream file(fileName);
+
+        if (file.is_open()) {
+            file << processesOrder << endl;
+
+            for (int i = 0; i < processesList.size(); i++) {
+                file << processesList[i].name << ": ";
+                file << "(response=" << processesList[i].response << ", ";
+                file << "turnaround=" << processesList[i].turnAround << ", ";
+                file << "delay=" << processesList[i].delay << ") ";
+                file << endl;
+            }
+        }
+
+        file.close();
+    }
+
     void SortProcesses() {
         sort(processesList.begin(), processesList.end(), SortingComparator);
     }
 
     void Schedule() {
         int timeline = 0;
-        vector<Process*> earlyQueue;
-        vector<Process*> lateQueue;
-
+        
         for (int i = 0; i < processesList.size(); i++) {
-            if (processesList[i].arrivalTime <= timeline) {
-                if (i == processesList.size() - 1) {
-                    earlyQueue.push_back(&processesList[i]);
-                    continue;
-                } else if (processesList[i + 1].arrivalTime < timeline) {
-                    earlyQueue.push_back(&processesList[i]);
-                    continue;
-                } else {
-                    if (earlyQueue.size() > 0) {
-                        earlyQueue.push_back(&processesList[i]);
-                        continue;
-                    }
-                }
+            if (i == 0) {
+                CalculateStats(processesList[i], timeline);
+                cout << processesList[i].name;
+                processesOrder += processesList[i].name;
+            } else if (processesList[i].arrivalTime < timeline) {
+                queue.push_back(&processesList[i]);
             } else {
-                if (i == processesList.size() - 1) {
-                    CalculateStats(processesList[i], timeline);
-                    cout << processesList[i].name << " " << timeline << endl;
-                } else if (processesList[i + 1].arrivalTime < processesList[i].arrivalTime + processesList[i].processingTime) {
-                    lateQueue.push_back(&processesList[i]);
-                    continue;
+                CalculateStats(processesList[i], timeline);
+                cout << processesList[i].name;
+                processesOrder += processesList[i].name;
+            }
+
+            for (int j = i + 1; j < processesList.size(); j++) {
+                if (processesList[j].arrivalTime < timeline) {
+                    queue.push_back(&processesList[j]);
+                    i++;
+                } else {
+                    break;
                 }
             }
 
-            CalculateStats(processesList[i], timeline);
-            cout << processesList[i].name << " " << timeline << endl;
-        }
-
-        for (int i = earlyQueue.size() - 1; i >= 0; i--) {
-            CalculateStats(*earlyQueue[i], timeline);
-            cout << earlyQueue[i]->name;
-            cout << " " << timeline << endl;
-            earlyQueue.pop_back();
-        }
-
-        for (int i = lateQueue.size() - 1; i >= 0; i--) {
-            CalculateStats(*lateQueue[i], timeline);
-            cout << lateQueue[i]->name;
-            cout << " " << timeline << endl;
-            lateQueue.pop_back();
+            for (int j = queue.size() - 1; j >= 0; j--) {
+                CalculateStats(*queue[j], timeline);
+                cout << queue[j]->name;
+                processesOrder += queue[j]->name;
+                queue.pop_back();
+            }
         }
     }
 
@@ -134,8 +139,11 @@ int main() {
     scheduler.ReadFile("in.txt");
     scheduler.SortProcesses();
     scheduler.Schedule();
+
     cout << endl;
+
     scheduler.PrintProcesses();
+    scheduler.WriteFile("out.txt");
     
     system("pause");
 
