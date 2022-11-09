@@ -92,8 +92,6 @@ class Scheduler {
         int timeline = 0;
         
         for (int i = 0; i < processesList.size(); i++) {
-            int tempIndex = i;
-
             if (i == 0) {
                 CalculateStats(processesList[i], timeline);
                 cout << processesList[i].name;
@@ -106,7 +104,7 @@ class Scheduler {
                 processesOrder += processesList[i].name;
             }
 
-            for (int j = tempIndex + 1; j < processesList.size(); j++) {
+            for (int j = i + 1; j < processesList.size(); j++) {
                 if (processesList[j].arrivalTime < timeline) {
                     queue.push_back(&processesList[j]);
                     i++;
